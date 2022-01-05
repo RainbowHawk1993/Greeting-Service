@@ -15,13 +15,14 @@ def greeting():
     #today = date.today()
 
     if not email:
-        error_statement = "ERROR... All form fields required"
+        error_statement = "Поле вітання пусте!"
         return render_template("index.html", error_statement=error_statement, email=email)
         
 
     for em in emails:
         if (email == em):
-            error_statement = "Привіт", email, "вже бачилися!"
+           #error_statement = "Привіт", email, "вже бачилися!"
+            error_statement = "Привіт {} вже бачилися!".format(email)
             return render_template("index.html", error_statement=error_statement, email=email)
 
     emails.append(email)
