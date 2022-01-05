@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-#from datetime import date
+from datetime import date
 
 app = Flask(__name__)
 
@@ -12,7 +12,7 @@ def index():
 @app.route('/greeting', methods = ["POST"])
 def greeting():
     email = request.form.get("email")
-    #today = date.today()
+    today = date.today()
 
     if not email:
         error_statement = "Поле вітання пусте!"
@@ -25,7 +25,7 @@ def greeting():
             error_statement = "Привіт {} вже бачилися!".format(email)
             return render_template("index.html", error_statement=error_statement, email=email)
 
-    emails.append(email)
+    emails.append(f" {email}   ||  {today}")
     return render_template("greeting.html", email=email)
 
 @app.route('/list')
