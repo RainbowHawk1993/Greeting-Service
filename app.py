@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 #Model of Database
 class List(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(200), nullable=False, unique=True)
     date_created=db.Column(db.DateTime, default=datetime.utcnow)
 
     #Function to return a string, part of the model
@@ -58,10 +58,10 @@ def list2():
         try:
             db.session.add(new_person)
             db.session.commit()
-            return redirect('/list2')
+            return render_template("greeting.html", email=person_name)
         except:
-            return "Error adding to database"
-
+            error_statement = "Привіт {} вже бачилися!".format(person_name)
+            return render_template("greeting.html", error_statement=error_statement)
     else:
         people = List.query.order_by(List.date_created)
         return render_template("list2.html", people = people)

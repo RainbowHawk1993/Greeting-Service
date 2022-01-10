@@ -1,5 +1,13 @@
 {% extends  'base.html' %}
 
 {% block content %} 
-<h1> Привіт {{ email }} </h1>
+
+{% if error_statement %}
+
+    <h1>{{ error_statement }}</h1>
+
+{%else%}
+    <h1> Привіт {{ email }} </h1>
+{% endif %}
+
 {% endblock %} 
