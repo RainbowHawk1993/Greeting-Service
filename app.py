@@ -1,7 +1,22 @@
-from flask import Flask, render_template, request
-from datetime import date
+from flask import Flask, render_template, request, redirect
+from flask_sqlalchemy import SQLAlchemy
+from datetime import date, datetime
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///list.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+#Model of Database
+class List(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    date_created=db.Column(db.DateTime, default=datetime.utcnow)
+
+    #Function to return a string, part of the model
+    def __repr__(self):
+        return '<Name %r>' % self.id
 
 emails_to_display = []
 emails = []
@@ -22,7 +37,6 @@ def greeting():
 
     for em in emails:
         if (email == em):
-           #error_statement = "Привіт", email, "вже бачилися!"
             error_statement = "Привіт {} вже бачилися!".format(email)
             return render_template("index.html", error_statement=error_statement, email=email)
             
@@ -33,3 +47,21 @@ def greeting():
 @app.route('/list')
 def list():
     return render_template("list.html", emails=emails_to_display)
+
+@app.route('/list2', methods=['POST', 'GET'])
+def list2():
+    if request.method == "POST":
+        person_name = request.form['name']
+        new_person = List(name = person_name)
+
+        #Adding info to database
+        try:
+            db.session.add(new_person)
+            db.session.commit()
+            return redirect('/list2')
+        except:
+            return "Error adding to database"
+
+    else:
+        people = List.query.order_by(List.date_created)
+        return render_template("list2.html", people = people)
